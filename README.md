@@ -1,2 +1,2 @@
-# google-applied-cs-skills-program
-Implementation of Android projects from Google's applied CS skill program
+# Google's Applied CS Skills Program
+Implementation of Android projects from the [Google's applied CS skills program](https://appliedcsskills.withgoogle.com/)
