@@ -30,7 +30,9 @@ import java.util.Queue;
 
 public class PathDictionary {
     private static final int MAX_WORD_LENGTH = 4;
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";    //all words are in lowercase
     private static HashSet<String> words = new HashSet<>();
+    private static HashMap<String, ArrayList<String> > AdjList = new HashMap<>();
 
     public PathDictionary(InputStream inputStream) throws IOException {
         if (inputStream == null) {
@@ -47,6 +49,42 @@ public class PathDictionary {
             }
             words.add(word);
         }
+        for(String w:words){
+            AdjList.put(w, new ArrayList<String>());
+            populateNeighbours(w);
+        }
+        Log.d("Word ladder", "Neighbours of cold " + neighbours("cold").toString());
+    }
+
+    /**
+     * Populate the neighbours for each word on the words set:
+     *  Each word is a node in the graph, represented as an Adjacency List.
+     *  For each word:
+     *  1. change each letter in the word, trying one character (from a to z) at a time
+     *  2. check if it forms a valid word, and add it to the adjacency list.
+     *
+     * Runtime:
+     *      26 (letters in alphabet) * 4 (MAX_WORD_LENGTH) * N (number of words):
+     *      O(104*N) = O(N)
+     * */
+    private void populateNeighbours(String word){
+        String suffix, prefix ="";
+        for(int i = 0; i < word.length(); i++){
+            if(i  > 0){
+                prefix = word.substring(0, i);
+            }
+            if(i == word.length()-1){
+                suffix = "";
+            }else{
+                suffix = word.substring(i+1);
+            }
+            for(int j = 0; j < ALPHABET.length(); j++){
+                String toCheck = prefix + ALPHABET.substring(j,j+1) + suffix;
+                if(!toCheck.equals(word) && toCheck.length() == word.length() && words.contains(toCheck)){
+                    AdjList.get(word).add(toCheck);
+                }
+            }
+        }
     }
 
     public boolean isWord(String word) {
@@ -54,7 +92,11 @@ public class PathDictionary {
     }
 
     private ArrayList<String> neighbours(String word) {
-        return new ArrayList<String>();
+        if(AdjList.containsKey(word.toLowerCase())){
+            return AdjList.get(word.toLowerCase());
+        }else{
+            return new ArrayList<String>();
+        }
     }
 
     public String[] findPath(String start, String end) {
