@@ -53,7 +53,14 @@ public class PathDictionary {
             AdjList.put(w, new ArrayList<String>());
             populateNeighbours(w);
         }
-        Log.d("Word ladder", "Neighbours of cold " + neighbours("cold").toString());
+        //Log.d("Word ladder", "Neighbours of cold " + neighbours("cold").toString());
+        String[] route = findPath("cold", "warm");
+        String p = "";
+        for(String w:route){
+            p += " "+w;
+        }
+        Log.d("Word ladder", "Path from cold to warm: " + p);
+
     }
 
     /**
@@ -100,6 +107,30 @@ public class PathDictionary {
     }
 
     public String[] findPath(String start, String end) {
+        ArrayDeque<ArrayList<String> > Q = new ArrayDeque();
+        HashSet<String > visited = new HashSet<>();
+        ArrayList<String> path = new ArrayList<>();
+        visited.add(start);
+        path.add(start);
+        Q.add(path);
+        while(!Q.isEmpty()) {
+            path = Q.remove();
+            for (String element : AdjList.get(path.get(path.size() - 1))) {
+                ArrayList<String> nextPath = new ArrayList<>();
+                for(String str: path){
+                    nextPath.add(str);
+                }
+                if (!visited.contains(element)) {
+                    nextPath.add(element);
+                    Q.add(nextPath);
+                    if (element.equals(end)) {
+                        String[] ret = new String[nextPath.size()];
+                        return nextPath.toArray(ret);
+                    }
+                    visited.add(element);
+                }
+            }
+        }
         return null;
     }
 }
