@@ -54,13 +54,16 @@ public class PathDictionary {
             populateNeighbours(w);
         }
         //Log.d("Word ladder", "Neighbours of cold " + neighbours("cold").toString());
-        String[] route = findPath("cold", "warm");
-        String p = "";
-        for(String w:route){
-            p += " "+w;
+        String[] route = findPath("gain", "fire");
+        if(route != null){
+            String p = "";
+            for(String w:route){
+                p += " "+w;
+            }
+            Log.d("Word ladder", "Path from gain to fire: " + p);
+        }else{
+            Log.d("Word ladder", "No path found");
         }
-        Log.d("Word ladder", "Path from cold to warm: " + p);
-
     }
 
     /**
