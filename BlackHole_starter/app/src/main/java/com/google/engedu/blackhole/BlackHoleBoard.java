@@ -83,6 +83,13 @@ public class BlackHoleBoard {
         // The column number is i - (the number of tiles in all the previous rows).
         // This is tricky to compute correctly so use the unit test in BlackHoleBoardTest to get it
         // right.
+        int row = ((int)Math.sqrt(8*i + 1) - 1) / 2;
+        int prevTiles = 0;
+        for(int j = row-1; j >= 0; j--){
+            prevTiles += (j+1);
+        }
+        int col = i - prevTiles;
+        result = new Coordinates(col, row);
         return result;
     }
 
