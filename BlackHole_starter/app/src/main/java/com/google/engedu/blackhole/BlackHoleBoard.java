@@ -76,7 +76,6 @@ public class BlackHoleBoard {
 
     // This is the inverse of the method above.
     protected Coordinates indexToCoords(int i) {
-        Coordinates result = null;
         // TODO: Compute the column and row number for the ith location in the array.
         // The row number is the triangular root of i as explained in wikipedia:
         // https://en.wikipedia.org/wiki/Triangular_number#Triangular_roots_and_tests_for_triangular_numbers
@@ -89,7 +88,7 @@ public class BlackHoleBoard {
             prevTiles += (j+1);
         }
         int col = i - prevTiles;
-        result = new Coordinates(col, row);
+        Coordinates result = new Coordinates(col, row);
         return result;
     }
 
@@ -154,6 +153,27 @@ public class BlackHoleBoard {
         // TODO: Implement this method to compute the final score for a given board.
         // Find the empty tile left on the board then add/substract the values of all the
         // surrounding tiles depending on who the tile belongs to.
+        if(gameOver()){
+            int index = 0;
+            for(int i = 0; i < BOARD_SIZE; i++){
+                if(tiles[i] == null){
+                    index = i;
+                    break;
+                }
+            }
+            Coordinates empty = indexToCoords(index);
+            ArrayList<BlackHoleTile> neighbors = getNeighbors(empty);
+            int computerCount = 0; int playerCount = 0;
+            int COMPUTER = 1; int PLAYER = 0;
+            for(BlackHoleTile tile : neighbors){
+                if(tile.player == COMPUTER){
+                    computerCount += tile.value;
+                }else if(tile.player == PLAYER){
+                    playerCount += tile.value;
+                }
+            }
+            score = computerCount - playerCount;
+        }
         return score;
     }
 
