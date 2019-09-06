@@ -19,8 +19,11 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /* Class that represent the state of the game.
  * Note that the buttons on screen are not updated by this class.
@@ -76,7 +79,7 @@ public class BlackHoleBoard {
 
     // This is the inverse of the method above.
     protected Coordinates indexToCoords(int i) {
-        // TODO: Compute the column and row number for the ith location in the array.
+        // Compute the column and row number for the ith location in the array.
         // The row number is the triangular root of i as explained in wikipedia:
         // https://en.wikipedia.org/wiki/Triangular_number#Triangular_roots_and_tests_for_triangular_numbers
         // The column number is i - (the number of tiles in all the previous rows).
@@ -130,10 +133,50 @@ public class BlackHoleBoard {
 
     // Pick a good move for the computer to make. Returns the array index of the position to play.
     public int pickMove() {
-        // TODO: Implement this method have the computer make a move.
+        //Implement this method have the computer make a move.
         // At first, we'll just invoke pickRandomMove (above) but later, you'll need to replace
         // it with an algorithm that uses the Monte Carlo method to pick a good move.
-        return pickRandomMove();
+        BlackHoleBoard copy;
+        HashMap<Integer, ArrayList<Integer> > scoreMap = new HashMap<>();
+        ArrayList<Integer> scoreList = new ArrayList<>();
+        int firstMove = 0;
+        for(int i = 0; i < NUM_GAMES_TO_SIMULATE; i++){
+            copy = new BlackHoleBoard();
+            copy.copyBoardState(this);
+            firstMove = copy.pickRandomMove();
+            int move = firstMove;
+            if(!scoreMap.containsKey(move)){
+                scoreList = new ArrayList<>();
+            }
+            while(!copy.gameOver()){
+                copy.setValue(move);
+                move = copy.pickRandomMove();
+            }
+            int score = copy.getScore();
+            scoreList.add(score);
+            scoreMap.put(firstMove, scoreList);
+        }
+        return getBestMove(scoreMap);
+    }
+
+    //Choose best move based on simulated game scores
+    private int getBestMove(HashMap<Integer, ArrayList<Integer> > scores){
+        int bestAvg = Integer.MIN_VALUE;
+        int bestMove = 0;
+        Set<Integer> keys = scores.keySet();
+        for(Integer k : keys) {
+            ArrayList<Integer> values = scores.get(k);
+            int sum = 0;
+            Iterator<Integer> it = values.iterator();
+            while (it.hasNext()) {
+                sum += it.next();
+            }
+            if (sum > bestAvg) {
+                bestAvg = sum;
+                bestMove = k;
+            }
+        }
+        return bestMove;
     }
 
     // Makes the next move on the board at position i. Automatically updates the current player.
@@ -150,7 +193,7 @@ public class BlackHoleBoard {
      */
     public int getScore() {
         int score = 0;
-        // TODO: Implement this method to compute the final score for a given board.
+        // Implement this method to compute the final score for a given board.
         // Find the empty tile left on the board then add/substract the values of all the
         // surrounding tiles depending on who the tile belongs to.
         if(gameOver()){

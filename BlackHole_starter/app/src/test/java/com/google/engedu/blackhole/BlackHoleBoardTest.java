@@ -49,7 +49,7 @@ public class BlackHoleBoardTest {
 
     @Test
     public void testGetScore() {
-        // TODO: Implement this test to verify that your getScore method is working.
+        // Implement this test to verify that your getScore method is working.
         BlackHoleBoard b = new BlackHoleBoard();
         for(int i = 0; i < b.BOARD_SIZE-1; i++){
             b.setValue(i);
